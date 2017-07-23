@@ -112,39 +112,27 @@ function getTodoFromStorage() {
   };
 }
 
-$('.todo-stream').on('keyup', 'h2', editTitle);
+$('.todo-stream').on('keyup', 'h2, p', editTodo);
 
-function editTitle(event) {
+function editTodo(event) {
   if (event.keyCode === 13) {
     event.preventDefault();
     this.blur();
-  }
+  };
+  editChanges();
+  sendTodoToStorage();
+};
+
+function editChanges() {
   var id = $(this).closest('.todo-card')[0].id;
   var title = $(this).text();
   todoArray.forEach(function(card) {
     if (card.id == id) {
       card.title = title;
-    }
-  });
-  sendTodoToStorage();
-};
-
-$('.todo-stream').on('keyup', 'p', editBody);
-
-function editBody(event) {
-  if (event.keyCode === 13) {
-    event.preventDefault();
-    this.blur();
-  }
-  var id = $(this).closest('.todo-card')[0].id;
-  var body = $(this).text();
-  todoArray.forEach(function(card) {
-    if (card.id == id) {
       card.body = body;
     }
   });
-  sendTodoToStorage();
-};
+}
 
 function prependCard(todo) {
   $('.todo-stream').prepend(
