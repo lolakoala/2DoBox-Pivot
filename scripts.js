@@ -69,7 +69,8 @@ function upVote() {
   if (checkQualityStatus === 'swill') {
     $(this).closest('.card-quality-flex').find('.todo-quality').text('plausible');
   } else {$(this).closest('.card-quality-flex').find('.todo-quality').text('genius');
-  }
+};
+
 };
 
 $(".todo-stream").on('click', "#downvote-button", downVote);
@@ -82,7 +83,7 @@ function downVote() {
   }
 };
 
-function FreshTodo(title, body, status) {
+function FreshTodo(title, body) {
   this.title = title;
   this.body = body;
   this.status = "swill";
@@ -92,8 +93,7 @@ function FreshTodo(title, body, status) {
 function addCard() {
   var todoTitle = $("#todo-title").val();
   var todoBody = $("#todo-body").val();
-  var todoStatus = "swill"
-  var newTodo = new FreshTodo(todoTitle, todoBody, todoStatus);
+  var newTodo = new FreshTodo(todoTitle, todoBody);
   prependCard(newTodo);
   todoArray.push(newTodo);
   sendTodoToStorage();
@@ -104,56 +104,44 @@ function sendTodoToStorage() {
 }
 
 function getTodoFromStorage() {
-  if (localStorage.getItem('todoArray')) {
-    todoArray = JSON.parse(localStorage.getItem("todoArray"));
+    todoArray = JSON.parse(localStorage.getItem("todoArray")) || [];
     todoArray.forEach(function(element) {
       prependCard(element);
     });
+};
+
+
+
+$('.todo-stream').on('keyup', 'h2, p', editTodo);
+
+function editTodo(event) {
+  if (event.keyCode === 13) {
+    event.preventDefault();
+    this.blur();
   };
+  editChanges();
+  sendTodoToStorage();
+};
+
+function editChanges() {
+  var cardId = parseInt($(this).closest('.todo-card').attr('id'));
+  todoArray.forEach(function(card, index) {
+    if (card.id === cardId) {
+      card.title = $('.title-todo').val();
+      card.body = $('.body-todo').val();
+    }
+  });
 }
 
-$('.todo-stream').on('keyup', 'h2', editTitle);
-
-function editTitle(event) {
-  if (event.keyCode === 13) {
-    event.preventDefault();
-    this.blur();
-  }
-  var id = $(this).closest('.todo-card')[0].id;
-  var title = $(this).text();
-  todoArray.forEach(function(card) {
-    if (card.id == id) {
-      card.title = title;
-    }
-  });
-  sendTodoToStorage();
-};
-
-$('.todo-stream').on('keyup', 'p', editBody);
-
-function editBody(event) {
-  if (event.keyCode === 13) {
-    event.preventDefault();
-    this.blur();
-  }
-  var id = $(this).closest('.todo-card')[0].id;
-  var body = $(this).text();
-  todoArray.forEach(function(card) {
-    if (card.id == id) {
-      card.body = body;
-    }
-  });
-  sendTodoToStorage();
-};
 
 function prependCard(todo) {
   $('.todo-stream').prepend(
     `<div class="todo-card" id="${todo.id}">
       <div class="card-title-flex">
-        <h2 contenteditable=true>${todo.title}</h2>
+        <h2 class="title-todo" contenteditable=true>${todo.title}</h2>
         <img src="icons/delete.svg" class="card-buttons delete-button" />
       </div>
-      <p contenteditable=true>${todo.body}</p>
+      <p class="body-todo" contenteditable=true>${todo.body}</p>
       <div class="card-quality-flex quality-spacing">
         <img src="icons/upvote.svg" class="card-buttons" id="upvote-button"/>
         <img src="icons/downvote.svg"  class="card-buttons" id="downvote-button" />
