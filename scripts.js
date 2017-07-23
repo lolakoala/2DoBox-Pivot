@@ -24,7 +24,6 @@ $(document).on('mouseenter', '#downvote-button', downvHover);
 $(document).on('mouseleave', '#downvote-button', originalDownv);
 
 //listener functions
-
 function enableSave() {
   if (($("#todo-title").val() !== "") && ($("#todo-body").val() !== "")) {
     $("#save-button").removeAttr("disabled");
@@ -156,7 +155,6 @@ function evalInputs() {
 };
 
 //hover state functions
-
 function deleteHover() {
   $(this).attr('src', 'icons/delete-hover.svg');
 };
