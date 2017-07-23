@@ -6,12 +6,8 @@
 body {
   font-family: "Open Sans", sans-serif;
   height: 100vh;
-  margin: 0;
   min-width: 350px;
   width: 100%;
-}
-
-.container {
   margin: auto;
   max-width: 100%;
 }
@@ -32,12 +28,12 @@ h1 {
   text-align: center;
 }
 
-.idea-log {
+.todo-log {
   margin: auto;
   width: 50%;
 }
 
-.idea-text {
+.todo-text {
   color: #00A79D;
 }
 
@@ -68,12 +64,12 @@ form {
   font-weight: bold;
 }
 
-#idea-body {
+#todo-body {
   margin-bottom:
 }
 
-#idea-title,
-#idea-body {
+#todo-title,
+#todo-body {
   padding-left: 5px;
 }
 
@@ -93,8 +89,8 @@ form {
   background-color: #D1D3D4;
 }
 
-#idea-title,
-#idea-body,
+#todo-title,
+#todo-body,
 #save-button,
 #search-bar:focus {
   outline: none;
@@ -109,7 +105,7 @@ form {
   width: 100%;
 }
 
-.idea-card {
+.todo-card {
   border-bottom: 1px #D1D3D4 solid;
   width: 100%;
 }
@@ -169,13 +165,13 @@ p {
 }
 
 @media (max-width: 900px) {
-  .idea-log {
+  .todo-log {
     width: 80%;
   }
 }
 
 @media (max-width: 750px) {
-  .idea-log {
+  .todo-log {
     width: 90%;
   }
 }
@@ -197,12 +193,12 @@ p {
     height: 380px;
   }
 
-  #idea-title,
+  #todo-title,
   #search-bar {
     height: 50px;
   }
 
-  #idea-body {
+  #todo-body {
     height: 120px;
     padding-bottom: 75px;
   }
@@ -212,7 +208,7 @@ p {
     height: 60px;
   }
 
-  ::-webkit-#idea-body-placeholder {
+  ::-webkit-#todo-body-placeholder {
     padding-bottom: 75px;
   }
 
