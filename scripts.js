@@ -1,10 +1,30 @@
+//on page load
 var todoArray = [];
-
 $(document).ready(getTodoFromStorage);
 
+//event Listeners
 $("#todo-body, #todo-title").on('keyup', enableSave);
+$("#save-button").on('click', saveFunc);
 
-  function enableSave() {
+$(".todo-stream").on('click', ".delete-button", removeCard);
+$(".todo-stream").on('click', "#upvote-button", upVote);
+$(".todo-stream").on('click', "#downvote-button", downVote);
+
+$('.todo-stream').on('keyup', 'h2', editTitle);
+$('.todo-stream').on('keyup', 'p', editBody);
+
+//button hover display listeners
+$(document).on('mouseenter', '.delete-button', deleteHover);
+$(document).on('mouseleave', '.delete-button', originalDelete);
+
+$(document).on('mouseenter', '#upvote-button', upvHover);
+$(document).on('mouseleave', '#upvote-button', originalUpv);
+
+$(document).on('mouseenter', '#downvote-button', downvHover);
+$(document).on('mouseleave', '#downvote-button', originalDownv);
+
+//listener functions
+function enableSave() {
   if (($("#todo-title").val() !== "") && ($("#todo-body").val() !== "")) {
     $("#save-button").removeAttr("disabled");
   } else {
@@ -12,57 +32,15 @@ $("#todo-body, #todo-title").on('keyup', enableSave);
   };
 };
 
-$("#save-button").on('click', saveFunc);
-
 function saveFunc(event) {
   event.preventDefault();
   evalInputs();
   enableSave();
 };
 
-$(".todo-stream").on('click', ".delete-button", removeCard);
-
 function removeCard() {
   $(this).closest('.todo-card').remove();
 };
-
-$(document).on('mouseenter', '.delete-button', deleteHover);
-
-function deleteHover() {
-  $(this).attr('src', 'icons/delete-hover.svg');
-};
-
-$(document).on('mouseleave', '.delete-button', originalDelete);
-
-function originalDelete() {
-  $(this).attr('src', 'icons/delete.svg');
-};
-
-$(document).on('mouseenter', '#upvote-button', upvHover);
-
-function upvHover() {
-  $(this).attr('src', 'icons/upvote-hover.svg');
-};
-
-$(document).on('mouseleave', '#upvote-button', originalUpv);
-
-function originalUpv() {
-  $(this).attr('src', 'icons/upvote.svg');
-};
-
-$(document).on('mouseenter', '#downvote-button', downvHover);
-
-function downvHover() {
-  $(this).attr('src', 'icons/downvote-hover.svg');
-};
-
-$(document).on('mouseleave', '#downvote-button', originalDownv);
-
-function originalDownv() {
-  $(this).attr('src', 'icons/downvote.svg');
-};
-
-$(".todo-stream").on('click', "#upvote-button", upVote);
 
 function upVote() {
   var checkQualityStatus = $(this).closest('.card-quality-flex').find('.todo-quality').text();
@@ -72,8 +50,6 @@ function upVote() {
   }
 };
 
-$(".todo-stream").on('click', "#downvote-button", downVote);
-
 function downVote() {
   var checkQualityStatus = $(this).closest('.card-quality-flex').find('.todo-quality').text();
   if (checkQualityStatus === 'genius') {
@@ -82,6 +58,37 @@ function downVote() {
   }
 };
 
+function editTitle(event) {
+  if (event.keyCode === 13) {
+    event.preventDefault();
+    this.blur();
+  }
+  var id = $(this).closest('.todo-card')[0].id;
+  var title = $(this).text();
+  todoArray.forEach(function(card) {
+    if (card.id == id) {
+      card.title = title;
+    }
+  });
+  sendTodoToStorage();
+};
+
+function editBody(event) {
+  if (event.keyCode === 13) {
+    event.preventDefault();
+    this.blur();
+  }
+  var id = $(this).closest('.todo-card')[0].id;
+  var body = $(this).text();
+  todoArray.forEach(function(card) {
+    if (card.id == id) {
+      card.body = body;
+    }
+  });
+  sendTodoToStorage();
+};
+
+//internal functions
 function FreshTodo(title, body, status) {
   this.title = title;
   this.body = body;
@@ -111,40 +118,6 @@ function getTodoFromStorage() {
     });
   };
 }
-
-$('.todo-stream').on('keyup', 'h2', editTitle);
-
-function editTitle(event) {
-  if (event.keyCode === 13) {
-    event.preventDefault();
-    this.blur();
-  }
-  var id = $(this).closest('.todo-card')[0].id;
-  var title = $(this).text();
-  todoArray.forEach(function(card) {
-    if (card.id == id) {
-      card.title = title;
-    }
-  });
-  sendTodoToStorage();
-};
-
-$('.todo-stream').on('keyup', 'p', editBody);
-
-function editBody(event) {
-  if (event.keyCode === 13) {
-    event.preventDefault();
-    this.blur();
-  }
-  var id = $(this).closest('.todo-card')[0].id;
-  var body = $(this).text();
-  todoArray.forEach(function(card) {
-    if (card.id == id) {
-      card.body = body;
-    }
-  });
-  sendTodoToStorage();
-};
 
 function prependCard(todo) {
   $('.todo-stream').prepend(
@@ -179,4 +152,29 @@ function evalInputs() {
     addCard();
     resetInputs();
   }
+};
+
+//hover state functions
+function deleteHover() {
+  $(this).attr('src', 'icons/delete-hover.svg');
+};
+
+function originalDelete() {
+  $(this).attr('src', 'icons/delete.svg');
+};
+
+function upvHover() {
+  $(this).attr('src', 'icons/upvote-hover.svg');
+};
+
+function originalUpv() {
+  $(this).attr('src', 'icons/upvote.svg');
+};
+
+function downvHover() {
+  $(this).attr('src', 'icons/downvote-hover.svg');
+};
+
+function originalDownv() {
+  $(this).attr('src', 'icons/downvote.svg');
 };

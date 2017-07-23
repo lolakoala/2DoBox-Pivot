@@ -68,9 +68,9 @@ form {
   font-weight: bold;
 }
 
-#todo-body {
+/*#todo-body {
   margin-bottom:
-}
+}*/
 
 #todo-title,
 #todo-body {
@@ -93,7 +93,7 @@ form {
   background-color: #D1D3D4;
 }
 
-#todo-title,
+#todo-title, /*refactor to .user-inputs ? */
 #todo-body,
 #save-button,
 #search-bar:focus {
