@@ -1,70 +1,88 @@
-var ideaArray = [];
+var todoArray = [];
 
-$(document).ready(function() {
-  getIdeaFromStorage();
-});
+$(document).ready(getTodoFromStorage);
 
-$("#idea-body, #idea-title").keyup(function() {
-  if (($("#idea-title").val() !== "") || ($("#idea-body").val() !== "")) {
+$("#todo-body, #todo-title").on('keyup', enableSave);
+
+  function enableSave() {
+  if (($("#todo-title").val() !== "") && ($("#todo-body").val() !== "")) {
     $("#save-button").removeAttr("disabled");
-  }
-});
+  } else {
+    $("#save-button").attr("disabled", "disabled");
+  };
+};
 
-$("#save-button").on('click', function(event) {
+$("#save-button").on('click', saveFunc);
+
+function saveFunc(event) {
   event.preventDefault();
   evalInputs();
-  $("#save-button").attr("disabled", "disabled");
-});
+  enableSave();
+};
 
-$(".idea-stream").on('click', ".delete-button", function() {
-  $(this).closest('.idea-card').remove();
-});
+$(".todo-stream").on('click', ".delete-button", removeCard);
 
-$(document).on('click', ".delete-button", function() {
-  $(this).closest('.idea-card').remove();
-});
+function removeCard() {
+  $(this).closest('.todo-card').remove();
+};
 
-$(document).on('mouseenter', '.delete-button', function() {
+$(document).on('mouseenter', '.delete-button', deleteHover);
+
+function deleteHover() {
   $(this).attr('src', 'icons/delete-hover.svg');
-});
+};
 
-$(document).on('mouseleave', '.delete-button', function() {
+$(document).on('mouseleave', '.delete-button', originalDelete);
+
+function originalDelete() {
   $(this).attr('src', 'icons/delete.svg');
-});
+};
 
-$(document).on('mouseenter', '#upvote-button', function() {
+$(document).on('mouseenter', '#upvote-button', upvHover);
+
+function upvHover() {
   $(this).attr('src', 'icons/upvote-hover.svg');
-});
+};
 
-$(document).on('mouseleave', '#upvote-button', function() {
+$(document).on('mouseleave', '#upvote-button', originalUpv);
+
+function originalUpv() {
   $(this).attr('src', 'icons/upvote.svg');
-});
+};
 
-$(document).on('mouseenter', '#downvote-button', function() {
+$(document).on('mouseenter', '#downvote-button', downvHover);
+
+function downvHover() {
   $(this).attr('src', 'icons/downvote-hover.svg');
-});
+};
 
-$(document).on('mouseleave', '#downvote-button', function() {
+$(document).on('mouseleave', '#downvote-button', originalDownv);
+
+function originalDownv() {
   $(this).attr('src', 'icons/downvote.svg');
-});
+};
 
-$(".idea-stream").on('click', "#upvote-button", function() {
-  var checkQualityStatus = $(this).closest('.card-quality-flex').find('.idea-quality').text();
+$(".todo-stream").on('click', "#upvote-button", upVote);
+
+function upVote() {
+  var checkQualityStatus = $(this).closest('.card-quality-flex').find('.todo-quality').text();
   if (checkQualityStatus === 'swill') {
-    $(this).closest('.card-quality-flex').find('.idea-quality').text('plausible');
-  } else {$(this).closest('.card-quality-flex').find('.idea-quality').text('genius');
+    $(this).closest('.card-quality-flex').find('.todo-quality').text('plausible');
+  } else {$(this).closest('.card-quality-flex').find('.todo-quality').text('genius');
   }
-});
+};
 
-$(".idea-stream").on('click', "#downvote-button", function() {
-  var checkQualityStatus = $(this).closest('.card-quality-flex').find('.idea-quality').text();
+$(".todo-stream").on('click', "#downvote-button", downVote);
+
+function downVote() {
+  var checkQualityStatus = $(this).closest('.card-quality-flex').find('.todo-quality').text();
   if (checkQualityStatus === 'genius') {
-    $(this).closest('.card-quality-flex').find('.idea-quality').text('plausible');
-  } else {$(this).closest('.card-quality-flex').find('.idea-quality').text('swill');
+    $(this).closest('.card-quality-flex').find('.todo-quality').text('plausible');
+  } else {$(this).closest('.card-quality-flex').find('.todo-quality').text('swill');
   }
-});
+};
 
-function FreshIdea(title, body, status) {
+function FreshTodo(title, body, status) {
   this.title = title;
   this.body = body;
   this.status = "swill";
@@ -72,89 +90,91 @@ function FreshIdea(title, body, status) {
 }
 
 function addCard() {
-  var ideaTitle = $("#idea-title").val();
-  var ideaBody = $("#idea-body").val();
-  var ideaStatus = "swill"
-  var newIdea = new FreshIdea(ideaTitle, ideaBody, ideaStatus);
-  prependCard(newIdea);
-  ideaArray.push(newIdea);
-  sendIdeaToStorage();
+  var todoTitle = $("#todo-title").val();
+  var todoBody = $("#todo-body").val();
+  var todoStatus = "swill"
+  var newTodo = new FreshTodo(todoTitle, todoBody, todoStatus);
+  prependCard(newTodo);
+  todoArray.push(newTodo);
+  sendTodoToStorage();
 };
 
-function sendIdeaToStorage() {
-  localStorage.setItem("ideaArray", JSON.stringify(ideaArray));
+function sendTodoToStorage() {
+  localStorage.setItem("todoArray", JSON.stringify(todoArray));
 }
 
-function getIdeaFromStorage() {
-  if (localStorage.getItem('ideaArray')) {
-    ideaArray = JSON.parse(localStorage.getItem("ideaArray"));
-    ideaArray.forEach(function(element) {
+function getTodoFromStorage() {
+  if (localStorage.getItem('todoArray')) {
+    todoArray = JSON.parse(localStorage.getItem("todoArray"));
+    todoArray.forEach(function(element) {
       prependCard(element);
     });
-  } else {
-    alert('You do not have any of your shit in here');
-  }
+  };
 }
 
-$('.idea-stream').on('keyup', 'h2', function(event) {
+$('.todo-stream').on('keyup', 'h2', editTitle);
+
+function editTitle(event) {
   if (event.keyCode === 13) {
     event.preventDefault();
     this.blur();
   }
-  var id = $(this).closest('.idea-card')[0].id;
+  var id = $(this).closest('.todo-card')[0].id;
   var title = $(this).text();
-  ideaArray.forEach(function(card) {
+  todoArray.forEach(function(card) {
     if (card.id == id) {
       card.title = title;
     }
   });
-  sendIdeaToStorage();
-});
+  sendTodoToStorage();
+};
 
-$('.idea-stream').on('keyup', 'p', function(event) {
+$('.todo-stream').on('keyup', 'p', editBody);
+
+function editBody(event) {
   if (event.keyCode === 13) {
     event.preventDefault();
     this.blur();
   }
-  var id = $(this).closest('.idea-card')[0].id;
+  var id = $(this).closest('.todo-card')[0].id;
   var body = $(this).text();
-  ideaArray.forEach(function(card) {
+  todoArray.forEach(function(card) {
     if (card.id == id) {
       card.body = body;
     }
   });
-  sendIdeaToStorage();
-});
+  sendTodoToStorage();
+};
 
-function prependCard(idea) {
-  $('.idea-stream').prepend(
-    `<div class="idea-card" id="${idea.id}">
+function prependCard(todo) {
+  $('.todo-stream').prepend(
+    `<div class="todo-card" id="${todo.id}">
       <div class="card-title-flex">
-        <h2 contenteditable=true>${idea.title}</h2>
+        <h2 contenteditable=true>${todo.title}</h2>
         <img src="icons/delete.svg" class="card-buttons delete-button" />
       </div>
-      <p contenteditable=true>${idea.body}</p>
+      <p contenteditable=true>${todo.body}</p>
       <div class="card-quality-flex quality-spacing">
         <img src="icons/upvote.svg" class="card-buttons" id="upvote-button"/>
         <img src="icons/downvote.svg"  class="card-buttons" id="downvote-button" />
-        <h3>quality: <span class="idea-quality">${idea.status}</span></h3>
+        <h3>quality: <span class="todo-quality">${todo.status}</span></h3>
       </div>
     </div>`
   );
 };
 
 function resetInputs() {
-  $('#idea-title').val('');
-  $('#idea-body').val('');
+  $('#todo-title').val('');
+  $('#todo-body').val('');
 };
 
 function evalInputs() {
-  var ideaTitle = $("#idea-title").val();
-  var ideaBody = $("#idea-body").val();
-  if (!ideaTitle) {
-    return alert("Please enter a title.");
-  } else if (!ideaBody) {
-    return alert ("Please enter something in the body.");
+  var todoTitle = $("#todo-title").val();
+  var todoBody = $("#todo-body").val();
+  if (!todoTitle) {
+    $("#todo-title").val("Please enter a title.");
+  } else if (!todoBody) {
+    $("#todo-body").val("Please enter a body.");
   } else {
     addCard();
     resetInputs();

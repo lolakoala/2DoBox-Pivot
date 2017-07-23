@@ -9,6 +9,10 @@ body {
   min-width: 350px;
   width: 100%;
   margin: auto;
+}
+
+.container {
+  margin: auto;
   max-width: 100%;
 }
 
