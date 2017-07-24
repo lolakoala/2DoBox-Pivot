@@ -100,6 +100,7 @@ function FreshTodo(title, body, status) {
 
 function getArrayFromStorage(){
   var todoArray = JSON.parse(localStorage.getItem("todoArray"));
+  todoArray === null ? todoArray = [] : null;
   return todoArray;
 }
 
