@@ -1,4 +1,4 @@
-//on page load
+sendArrayToStorage//on page load
 // var todoArray = [];
 $(document).ready(getTodoFromStorage);
 
@@ -71,7 +71,7 @@ function editTitle(event) {
       card.title = title;
     }
   });
-  sendTodoToStorage(todoArray);
+  sendArrayToStorage(todoArray);
 };
 
 function editBody(event) {
@@ -87,7 +87,7 @@ function editBody(event) {
       card.body = body;
     }
   });
-  sendTodoToStorage(todoArray);
+  sendArrayToStorage(todoArray);
 };
 
 //internal functions
@@ -111,10 +111,10 @@ function addCard() {
   prependCard(newTodo);
   var todoArray = getArrayFromStorage();
   todoArray.push(newTodo);
-  sendTodoToStorage(todoArray);
+  sendArrayToStorage(todoArray);
 };
 
-function sendTodoToStorage(todoArray) {
+function sendArrayToStorage(todoArray) {
   localStorage.setItem("todoArray", JSON.stringify(todoArray));
 }
 
