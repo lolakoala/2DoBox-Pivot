@@ -1,5 +1,5 @@
-//on page load
-var todoArray = [];
+sendArrayToStorage//on page load
+// var todoArray = [];
 $(document).ready(getTodoFromStorage);
 
 //event Listeners
@@ -65,12 +65,13 @@ function editTitle(event) {
   }
   var id = $(this).closest('.todo-card')[0].id;
   var title = $(this).text();
+  var todoArray = getArrayFromStorage();
   todoArray.forEach(function(card) {
     if (card.id == id) {
       card.title = title;
     }
   });
-  sendTodoToStorage();
+  sendArrayToStorage(todoArray);
 };
 
 function editBody(event) {
@@ -80,12 +81,13 @@ function editBody(event) {
   }
   var id = $(this).closest('.todo-card')[0].id;
   var body = $(this).text();
+  var todoArray = getArrayFromStorage();
   todoArray.forEach(function(card) {
     if (card.id == id) {
       card.body = body;
     }
   });
-  sendTodoToStorage();
+  sendArrayToStorage(todoArray);
 };
 
 //internal functions
@@ -96,23 +98,29 @@ function FreshTodo(title, body, status) {
   this.id = Date.now();
 }
 
+function getArrayFromStorage(){
+  var todoArray = JSON.parse(localStorage.getItem("todoArray"));
+  return todoArray;
+}
+
 function addCard() {
   var todoTitle = $("#todo-title").val();
   var todoBody = $("#todo-body").val();
   var todoStatus = "swill"
   var newTodo = new FreshTodo(todoTitle, todoBody, todoStatus);
   prependCard(newTodo);
+  var todoArray = getArrayFromStorage();
   todoArray.push(newTodo);
-  sendTodoToStorage();
+  sendArrayToStorage(todoArray);
 };
 
-function sendTodoToStorage() {
+function sendArrayToStorage(todoArray) {
   localStorage.setItem("todoArray", JSON.stringify(todoArray));
 }
 
 function getTodoFromStorage() {
   if (localStorage.getItem('todoArray')) {
-    todoArray = JSON.parse(localStorage.getItem("todoArray"));
+    var todoArray = JSON.parse(localStorage.getItem("todoArray"));
     todoArray.forEach(function(element) {
       prependCard(element);
     });
