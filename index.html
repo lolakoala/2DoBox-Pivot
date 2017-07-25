@@ -22,9 +22,18 @@
       </section>
     </section>
       <section class="white-box search-box">
-        <article class="todo-log">
+        <article class="todo-log todo-buttons">
           <form>
-            <input id="search-bar" class="user-inputs" type="text" name="search" placeholder="Search" />
+            <input id="search-bar" class="user-inputs" type="text" name="search" placeholder="Filter" />
+            <button id="show-completed-button" class="user-inputs" type="submit" />show completed</button>
+            <button id="show-all-button" class="user-inputs" type="submit" />show all todo</button>
+            <div class="button-holder">
+              <button class="user-inputs importance" type="submit" />critical</button>
+              <button class="user-inputs importance" type="submit" />high</button>
+              <button class="user-inputs importance" type="submit" />normal</button>
+              <button class="user-inputs importance" type="submit" />low</button>
+              <button class="user-inputs importance" type="submit" />none</button>
+            </div>
           </form>
         </article>
       </section>

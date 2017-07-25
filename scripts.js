@@ -1,6 +1,4 @@
-// sendArrayToStorage//on page load
-// var todoArray = [];
-$(window).on('load',updateHtml);
+$(window).on('load',showTen);
 
 //event Listeners
 $("#todo-body, #todo-title").on('keyup', enableSave);
@@ -14,6 +12,11 @@ $(".todo-stream").on('click', "#downvote-button", downVote);
 $('.todo-stream').on('keyup', 'h2', editCard);
 $('.todo-stream').on('keyup', 'p', editCard);
 $('#search-bar').on('keyup', filterTodo);
+$('.todo-stream').on('click', '.completed', todoComplete);
+
+$('.todo-buttons').on('click', '#show-all-button', updateHtml);
+$('.todo-buttons').on('click', '#show-completed-button', filterCompleted);
+
 
 //button hover display listeners
 $(document).on('mouseenter', '.delete-button', deleteHover);
@@ -53,18 +56,23 @@ function removeCard() {
 };
 
 function upVote() {
-  console.log('upvote');
   var todoArray = getArrayFromStorage();
   var id = parseInt($(this).closest('.todo-card').attr('id'));
-  var cardQ = $(this).closest('.todo-card').find('.todo-quality');
+  var cardI = $(this).closest('.todo-card').find('.todo-importance');
   todoArray.forEach(function(card, index) {
     if (card.id === id ) {
-      if (card.status === 'swill') {
-        cardQ.text('plausible');
-        card.status = 'plausible';
-      } else {
-        cardQ.text('genius');
-        card.status = 'genius';
+      if (card.status === 'none') {
+        cardI.text('low');
+        card.status = 'low';
+      } else if (card.status === 'low') {
+        cardI.text('normal');
+        card.status = 'normal';
+      }else if (card.status === 'normal') {
+        cardI.text('high');
+        card.status = 'high';
+      }else {
+        cardI.text('critical');
+        card.status = 'critical';
     }
     }
   ;})
@@ -72,25 +80,28 @@ sendArrayToStorage(todoArray);
 };
 
 function downVote() {
-  console.log('upvote');
   var todoArray = getArrayFromStorage();
   var id = parseInt($(this).closest('.todo-card').attr('id'));
-  var cardQ = $(this).closest('.todo-card').find('.todo-quality');
+  var cardI = $(this).closest('.todo-card').find('.todo-importance');
   todoArray.forEach(function(card, index) {
     if (card.id === id ) {
-      if (card.status === 'genius') {
-        cardQ.text('plausible');
-        card.status = 'plausible';
-      } else {
-        cardQ.text('swill');
-        card.status = 'swill';
+      if (card.status === 'critical') {
+        cardI.text('high');
+        card.status = 'high';
+      } else if (card.status === 'high') {
+        cardI.text('normal');
+        card.status = 'normal';
+      }else if (card.status === 'normal') {
+        cardI.text('low');
+        card.status = 'low';
+      }else {
+        cardI.text('none');
+        card.status = 'none';
     }
     }
   ;})
 sendArrayToStorage(todoArray);
 };
-
-
 
 function editCard(event) {
   if (event.keyCode === 13) {
@@ -109,28 +120,12 @@ function editCard(event) {
   sendArrayToStorage(todoArray);
 };
 
-// function editBody(event) {
-//   if (event.keyCode === 13) {
-//     event.preventDefault();
-//     this.blur();
-//   }
-//   var id = $(this).closest('.todo-card')[0].id;
-//   var body = $(this).text();
-//   var todoArray = getArrayFromStorage();
-//   todoArray.forEach(function(card) {
-//     if (card.id == id) {
-//       card.body = body;
-//     }
-//   });
-//   sendArrayToStorage(todoArray);
-// };
-
-//internal functions
 function FreshTodo(title, body) {
   this.title = title;
   this.body = body;
-  this.status = "swill";
+  this.status = "normal";
   this.id = Date.now();
+  this.completed = false;
 }
 
 function getArrayFromStorage(){
@@ -144,12 +139,11 @@ function getArrayFromStorage(){
   };
 }
 
-function updateHtml() {
+function updateHtml(event) {
+  event.preventDefault();
   var todoArray = localStorage.getItem("todoArray");
   if ((todoArray !== "undefined") && (todoArray !== null)) {
     todoArray = JSON.parse(todoArray);
-    // return todoArray;
-    console.log(todoArray);
     todoArray.forEach(function(card) {
       prependCard(card);
     });
@@ -159,7 +153,21 @@ function updateHtml() {
   };
 }
 
+function showTen() {
+  var todoArray = localStorage.getItem("todoArray");
+  if ((todoArray !== "undefined") && (todoArray !== null)) {
+    todoArray = JSON.parse(todoArray);
+    todoArray.forEach(function(card, index) {
+      if (index <= 9){
+        prependCard(card);
+      }
 
+    });
+  } else {
+    todoArray = [];
+    return todoArray;
+  };
+}
 
 function addCard() {
   var todoTitle = $("#todo-title").val();
@@ -176,15 +184,6 @@ function sendArrayToStorage(todoArray) {
   localStorage.setItem("todoArray", JSON.stringify(todoArray));
 }
 
-// function getTodoFromStorage() {
-//   if (localStorage.getItem('todoArray')) {
-//     var todoArray = JSON.parse(localStorage.getItem("todoArray"));
-//     todoArray.forEach(function(element) {
-//       prependCard(element);
-//     });
-//   };
-// }
-
 function prependCard(todo) {
   $('.todo-stream').prepend(
     `<div class="todo-card" id="${todo.id}">
@@ -196,7 +195,8 @@ function prependCard(todo) {
       <div class="card-quality-flex quality-spacing">
         <img src="icons/upvote.svg" class="card-buttons" id="upvote-button"/>
         <img src="icons/downvote.svg"  class="card-buttons" id="downvote-button" />
-        <h3>quality: <span class="todo-quality">${todo.status}</span></h3>
+        <h3>importance: <span class="todo-importance">${todo.status}</span></h3>
+        <button class="completed">completed</button>
       </div>
     </div>`
   );
@@ -237,6 +237,38 @@ function filterTodo() {
     updateHtml();
   }
 }
+
+// not working
+function todoComplete() {
+  console.log('in complete button');
+  var todoArray = getArrayFromStorage();
+  var id = parseInt($(this).closest('.todo-card').attr('id'));
+  var todoCard = $(this).closest('.todo-card');
+  console.log(todoCard);
+  todoArray.forEach(function(card, index) {
+    if (card.id === id ) {
+      // todoCard.classList.add("todo-completed");
+    // todoCard.className += " todo-completed";
+    $(todoCard).addClass('todo-completed');
+      card.completed = true;
+  }});
+  sendArrayToStorage(todoArray);
+}
+
+
+function filterCompleted(event) {
+  event.preventDefault();
+  var todoArray = getArrayFromStorage();
+  var filterComplete = todoArray.filter(function(card) {
+      return (card.completed === true)
+    });
+    $('.todo-stream').empty();
+    filterComplete.forEach(function(card) {
+      prependCard(card);
+    });
+
+}
+
 
 //hover state functions
 function deleteHover() {
