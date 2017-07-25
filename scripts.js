@@ -13,6 +13,7 @@ $(".todo-stream").on('click', "#downvote-button", downVote);
 
 $('.todo-stream').on('keyup', 'h2', editCard);
 $('.todo-stream').on('keyup', 'p', editCard);
+$('#search-bar').on('keyup', filterTodo);
 
 //button hover display listeners
 $(document).on('mouseenter', '.delete-button', deleteHover);
@@ -218,6 +219,24 @@ function evalInputs() {
     resetInputs();
   }
 };
+
+function filterTodo() {
+  var todoArray = getArrayFromStorage();
+  var filterInput = $('#search-bar').val();
+  if (filterInput !== ""){
+    var filterCards = todoArray.filter(function(card) {
+      return (card.title.toLowerCase().includes(filterInput.toLowerCase()) ||
+      card.body.toLowerCase().includes(filterInput.toLowerCase()));
+    });
+    $('.todo-stream').empty();
+    filterCards.forEach(function(card) {
+      prependCard(card);
+    });
+  } else if (filterInput === "") {
+    $('.todo-stream').empty();
+    updateHtml();
+  }
+}
 
 //hover state functions
 function deleteHover() {
