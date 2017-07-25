@@ -52,14 +52,19 @@ function saveFunc(event) {
 function removeCard() {
   var id = parseInt($(this).closest('.todo-card').attr('id'));
   var todoArray = getArrayFromStorage();
-  todoArray.forEach(function(card, index) {
-    if (card.id === id) {
-      todoArray.splice(index, 1);
-    };
-  });
+  todoArray = spliceArray(id, todoArray);
   sendArrayToStorage(todoArray);
   $(this).closest('.todo-card').remove();
 };
+
+function spliceArray(id, todoArray) {
+todoArray.forEach(function(card, index) {
+  if (card.id === id) {
+    todoArray.splice(index, 1);
+  };
+});
+  return todoArray;
+}
 
 function upVote() {
   var todoArray = getArrayFromStorage();
@@ -67,23 +72,34 @@ function upVote() {
   var cardI = $(this).closest('.todo-card').find('.todo-importance');
   todoArray.forEach(function(card, index) {
     if (card.id === id ) {
-      if (card.status === 'none') {
-        cardI.text('low');
-        card.status = 'low';
-      } else if (card.status === 'low') {
-        cardI.text('normal');
-        card.status = 'normal';
-      }else if (card.status === 'normal') {
-        cardI.text('high');
-        card.status = 'high';
-      }else {
-        cardI.text('critical');
-        card.status = 'critical';
-    }
+      importanceUp(card, cardI);
     }
   ;})
 sendArrayToStorage(todoArray);
 };
+
+function importanceUp(card, cardI) {
+  switch (card.status) {
+    case 'none':
+      cardI.text('low');
+      card.status = 'low';
+      break;
+    case 'low':
+      cardI.text('normal');
+      card.status = 'normal';
+      break;
+    case 'normal':
+      cardI.text('high');
+      card.status = 'high';
+      break;
+    case 'high':
+      cardI.text('critical');
+      card.status = 'critical';
+      break;
+      default:
+      break;
+  }
+}
 
 function downVote() {
   var todoArray = getArrayFromStorage();
@@ -91,47 +107,68 @@ function downVote() {
   var cardI = $(this).closest('.todo-card').find('.todo-importance');
   todoArray.forEach(function(card, index) {
     if (card.id === id ) {
-      if (card.status === 'critical') {
-        cardI.text('high');
-        card.status = 'high';
-      } else if (card.status === 'high') {
-        cardI.text('normal');
-        card.status = 'normal';
-      }else if (card.status === 'normal') {
-        cardI.text('low');
-        card.status = 'low';
-      }else {
-        cardI.text('none');
-        card.status = 'none';
-    }
+      importanceDown(card, cardI);
     }
   ;})
 sendArrayToStorage(todoArray);
 };
 
-function editCard(event) {
-  if (event.keyCode === 13) {
-    event.preventDefault();
-    this.blur();
+function importanceDown(card, cardI) {
+  switch (card.status) {
+    case 'critical':
+      cardI.text('high');
+      card.status = 'high';
+      break;
+    case 'high':
+      cardI.text('normal');
+      card.status = 'normal';
+      break;
+    case 'normal':
+      cardI.text('low');
+      card.status = 'low';
+      break;
+    case 'low':
+      cardI.text('none');
+      card.status = 'none';
+      break;
+      default:
+      break;
   }
-  var id = $(this).closest('.todo-card')[0].id;
+}
 
+function editArray(id, event) {
   var todoArray = getArrayFromStorage();
-  todoArray.forEach(function(card, index) {
+  todoArray.map(function(card, index) {
     if (card.id === id) {
-      card.title = $('h2').text();
-      card.body = $('p').text();
+      console.log($(event.target));
+      card.title = $(event.target).closest('.todo-card').find('h2').text();
+      card.body = $(event.target).closest('.todo-card').find('p').text();
     }
   });
-  sendArrayToStorage(todoArray);
+  return todoArray;
+}
+
+function editCard(event) {
+  checkEnter(event);
+  var id = parseInt($(this).closest('.todo-card').attr('id'));
+  var todoArray2 = editArray(id, event);
+  sendArrayToStorage(todoArray2);
 };
+
+function checkEnter(event) {
+  if (event.keyCode === 13) {
+  event.preventDefault();
+  this.blur();
+}
+}
+
 
 function FreshTodo(title, body) {
   this.title = title;
   this.body = body;
   this.status = "normal";
   this.id = Date.now();
-  this.completed = false;
+  this.completed = 'incomplete';
 }
 
 function getArrayFromStorage(){
@@ -140,8 +177,7 @@ function getArrayFromStorage(){
     todoArray = JSON.parse(todoArray);
     return todoArray;
   } else {
-    todoArray = [];
-    return todoArray;
+    emptyArray(todoArray);
   };
 }
 
@@ -150,12 +186,9 @@ function updateHtml(event) {
   var todoArray = localStorage.getItem("todoArray");
   if ((todoArray !== "undefined") && (todoArray !== null)) {
     todoArray = JSON.parse(todoArray);
-    todoArray.reverse().forEach(function(card) {
-      prependCard(card);
-    });
+    updateStream(todoArray);
   } else {
-    todoArray = [];
-    return todoArray;
+    emptyArray(todoArray);
   };
 }
 
@@ -163,21 +196,24 @@ function showTen() {
   var todoArray = localStorage.getItem("todoArray");
   if ((todoArray !== "undefined") && (todoArray !== null)) {
     todoArray = JSON.parse(todoArray);
-    todoArray.reverse().forEach(function(card, index) {
+    todoArray.forEach(function(card, index) {
       if (index <= 9){
       prependCard(card);
       }
     });
   } else {
-    todoArray = [];
-    return todoArray;
+    emptyArray(todoArray);
   };
+}
+
+function emptyArray(todoArray) {
+  todoArray = [];
+  return todoArray;
 }
 
 function addCard() {
   var todoTitle = $("#todo-title").val();
   var todoBody = $("#todo-body").val();
-  // var todoStatus = "swill"
   var newTodo = new FreshTodo(todoTitle, todoBody);
   prependCard(newTodo);
   var todoArray = getArrayFromStorage();
@@ -191,7 +227,7 @@ function sendArrayToStorage(todoArray) {
 
 function prependCard(todo) {
   $('.todo-stream').prepend(
-    `<div class="todo-card" id="${todo.id}">
+    `<div class="todo-card ${todo.completed}" id="${todo.id}">
       <div class="card-title-flex">
         <h2 contenteditable=true>${todo.title}</h2>
         <img src="icons/delete.svg" class="card-buttons delete-button" />
@@ -217,45 +253,55 @@ function filterTodo() {
   var todoArray = getArrayFromStorage();
   var filterInput = $('#search-bar').val();
   if (filterInput !== ""){
-    var filterCards = todoArray.filter(function(card) {
-      return (card.title.toLowerCase().includes(filterInput.toLowerCase()) ||
-      card.body.toLowerCase().includes(filterInput.toLowerCase()));
-    });
-    $('.todo-stream').empty();
-    filterCards.forEach(function(card) {
-      prependCard(card);
-    });
+    matchFilterInput(todoArray, filterInput);
   } else if (filterInput === "") {
-    $('.todo-stream').empty();
-    updateHtml();
+    adjustStream();
   }
 }
 
+function matchFilterInput(todoArray, filterInput) {
+  var filterCards = todoArray.filter(function(card) {
+    return (card.title.toLowerCase().includes(filterInput.toLowerCase()) ||
+    card.body.toLowerCase().includes(filterInput.toLowerCase()));
+  });
+  updateStream(filterCards);
+}
+
 function todoComplete() {
-  console.log('in complete button');
   var todoArray = getArrayFromStorage();
   var id = parseInt($(this).closest('.todo-card').attr('id'));
-  var todoCard = $(this).closest('.todo-card');
-  console.log(todoCard);
-  todoArray.forEach(function(card, index) {
-    if (card.id === id ) {
-  // css changes aren't sustained when clicking 'show-completed-button' or on reload or 'show all'
-    $(todoCard).addClass('todo-completed');
-      card.completed = true;
-  }});
+  todoArray = completedClass(todoArray, id);
   sendArrayToStorage(todoArray);
+  adjustStream();
+}
+
+function adjustStream() {
+  $('.todo-stream').empty();
+  showTen();
+}
+
+function completedClass(todoArray, id) {
+  todoArray.forEach(function(card, index) {
+  if (card.id === id ) {
+    card.completed = 'todo-completed';
+}});
+  return todoArray;
 }
 
 function filterCompleted(event) {
   event.preventDefault();
   var todoArray = getArrayFromStorage();
   var filterComplete = todoArray.filter(function(card) {
-      return (card.completed === true)
+      return (card.completed === 'todo-completed')
     });
-    $('.todo-stream').empty();
-    filterComplete.forEach(function(card) {
-      prependCard(card);
-    });
+    updateStream(filterComplete);
+}
+
+function updateStream(array) {
+  $('.todo-stream').empty();
+  array.forEach(function(card) {
+    prependCard(card);
+  });
 }
 
 function showCritical(event) {
@@ -264,10 +310,7 @@ function showCritical(event) {
   var criticalArray = todoArray.filter(function(card) {
       return (card.status === 'critical')
     });
-    $('.todo-stream').empty();
-    criticalArray.reverse().forEach(function(card) {
-      prependCard(card);
-    });
+    updateStream(criticalArray);
 }
 
 function showHigh(event) {
@@ -276,10 +319,7 @@ function showHigh(event) {
   var highArray = todoArray.filter(function(card) {
       return (card.status === 'high')
     });
-    $('.todo-stream').empty();
-    highArray.reverse().forEach(function(card) {
-      prependCard(card);
-    });
+    updateStream(highArray);
 }
 
 function showNormal(event) {
@@ -288,10 +328,7 @@ function showNormal(event) {
   var normalArray = todoArray.filter(function(card) {
       return (card.status === 'normal')
     });
-    $('.todo-stream').empty();
-    normalArray.reverse().forEach(function(card) {
-      prependCard(card);
-    });
+    updateStream(normalArray);
 }
 
 function showLow(event) {
@@ -300,10 +337,7 @@ function showLow(event) {
   var lowArray = todoArray.filter(function(card) {
       return (card.status === 'low')
     });
-    $('.todo-stream').empty();
-    lowArray.reverse().forEach(function(card) {
-      prependCard(card);
-    });
+    updateStream(lowArray);
 }
 
 function showNone(event) {
@@ -312,13 +346,8 @@ function showNone(event) {
   var noneArray = todoArray.filter(function(card) {
       return (card.status === 'none')
     });
-    $('.todo-stream').empty();
-    noneArray.reverse().forEach(function(card) {
-      prependCard(card);
-    });
+    updateStream(noneArray);
 }
-
-
 
 //hover state functions
 function deleteHover() {
