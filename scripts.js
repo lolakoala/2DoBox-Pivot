@@ -16,6 +16,11 @@ $('.todo-stream').on('click', '.completed', todoComplete);
 
 $('.todo-buttons').on('click', '#show-all-button', updateHtml);
 $('.todo-buttons').on('click', '#show-completed-button', filterCompleted);
+$('.todo-buttons').on('click', '.critical', showCritical);
+$('.todo-buttons').on('click', '.high', showHigh);
+$('.todo-buttons').on('click', '.normal', showNormal);
+$('.todo-buttons').on('click', '.low', showLow);
+$('.todo-buttons').on('click', '.none', showNone);
 
 
 //button hover display listeners
@@ -39,7 +44,8 @@ function enableSave() {
 
 function saveFunc(event) {
   event.preventDefault();
-  evalInputs();
+  addCard();
+  resetInputs();
   enableSave();
 };
 
@@ -144,7 +150,7 @@ function updateHtml(event) {
   var todoArray = localStorage.getItem("todoArray");
   if ((todoArray !== "undefined") && (todoArray !== null)) {
     todoArray = JSON.parse(todoArray);
-    todoArray.forEach(function(card) {
+    todoArray.reverse().forEach(function(card) {
       prependCard(card);
     });
   } else {
@@ -157,11 +163,10 @@ function showTen() {
   var todoArray = localStorage.getItem("todoArray");
   if ((todoArray !== "undefined") && (todoArray !== null)) {
     todoArray = JSON.parse(todoArray);
-    todoArray.forEach(function(card, index) {
+    todoArray.reverse().forEach(function(card, index) {
       if (index <= 9){
-        prependCard(card);
+      prependCard(card);
       }
-
     });
   } else {
     todoArray = [];
@@ -207,18 +212,6 @@ function resetInputs() {
   $('#todo-body').val('');
 };
 
-function evalInputs() {
-  var todoTitle = $("#todo-title").val();
-  var todoBody = $("#todo-body").val();
-  if (!todoTitle) {
-    $("#todo-title").val("Please enter a title.");
-  } else if (!todoBody) {
-    $("#todo-body").val("Please enter a body.");
-  } else {
-    addCard();
-    resetInputs();
-  }
-};
 
 function filterTodo() {
   var todoArray = getArrayFromStorage();
@@ -238,7 +231,6 @@ function filterTodo() {
   }
 }
 
-// not working
 function todoComplete() {
   console.log('in complete button');
   var todoArray = getArrayFromStorage();
@@ -247,14 +239,12 @@ function todoComplete() {
   console.log(todoCard);
   todoArray.forEach(function(card, index) {
     if (card.id === id ) {
-      // todoCard.classList.add("todo-completed");
-    // todoCard.className += " todo-completed";
+  // css changes aren't sustained when clicking 'show-completed-button' or on reload or 'show all'
     $(todoCard).addClass('todo-completed');
       card.completed = true;
   }});
   sendArrayToStorage(todoArray);
 }
-
 
 function filterCompleted(event) {
   event.preventDefault();
@@ -266,8 +256,68 @@ function filterCompleted(event) {
     filterComplete.forEach(function(card) {
       prependCard(card);
     });
-
 }
+
+function showCritical(event) {
+  event.preventDefault();
+  var todoArray = getArrayFromStorage();
+  var criticalArray = todoArray.filter(function(card) {
+      return (card.status === 'critical')
+    });
+    $('.todo-stream').empty();
+    criticalArray.reverse().forEach(function(card) {
+      prependCard(card);
+    });
+}
+
+function showHigh(event) {
+  event.preventDefault();
+  var todoArray = getArrayFromStorage();
+  var highArray = todoArray.filter(function(card) {
+      return (card.status === 'high')
+    });
+    $('.todo-stream').empty();
+    highArray.reverse().forEach(function(card) {
+      prependCard(card);
+    });
+}
+
+function showNormal(event) {
+  event.preventDefault();
+  var todoArray = getArrayFromStorage();
+  var normalArray = todoArray.filter(function(card) {
+      return (card.status === 'normal')
+    });
+    $('.todo-stream').empty();
+    normalArray.reverse().forEach(function(card) {
+      prependCard(card);
+    });
+}
+
+function showLow(event) {
+  event.preventDefault();
+  var todoArray = getArrayFromStorage();
+  var lowArray = todoArray.filter(function(card) {
+      return (card.status === 'low')
+    });
+    $('.todo-stream').empty();
+    lowArray.reverse().forEach(function(card) {
+      prependCard(card);
+    });
+}
+
+function showNone(event) {
+  event.preventDefault();
+  var todoArray = getArrayFromStorage();
+  var noneArray = todoArray.filter(function(card) {
+      return (card.status === 'none')
+    });
+    $('.todo-stream').empty();
+    noneArray.reverse().forEach(function(card) {
+      prependCard(card);
+    });
+}
+
 
 
 //hover state functions
