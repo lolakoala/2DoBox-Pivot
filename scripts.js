@@ -1,6 +1,4 @@
-sendArrayToStorage//on page load
-// var todoArray = [];
-$(document).ready(getTodoFromStorage);
+$(window).on('load',showTen);
 
 //event Listeners
 $("#todo-body, #todo-title").on('keyup', enableSave);
@@ -10,8 +8,15 @@ $(".todo-stream").on('click', ".delete-button", removeCard);
 $(".todo-stream").on('click', "#upvote-button", upVote);
 $(".todo-stream").on('click', "#downvote-button", downVote);
 
-$('.todo-stream').on('keyup', 'h2', editTitle);
-$('.todo-stream').on('keyup', 'p', editBody);
+
+$('.todo-stream').on('keyup', 'h2', editCard);
+$('.todo-stream').on('keyup', 'p', editCard);
+$('#search-bar').on('keyup', filterTodo);
+$('.todo-stream').on('click', '.completed', todoComplete);
+
+$('.todo-buttons').on('click', '#show-all-button', updateHtml);
+$('.todo-buttons').on('click', '#show-completed-button', filterCompleted);
+
 
 //button hover display listeners
 $(document).on('mouseenter', '.delete-button', deleteHover);
@@ -39,76 +44,136 @@ function saveFunc(event) {
 };
 
 function removeCard() {
+  var id = parseInt($(this).closest('.todo-card').attr('id'));
+  var todoArray = getArrayFromStorage();
+  todoArray.forEach(function(card, index) {
+    if (card.id === id) {
+      todoArray.splice(index, 1);
+    };
+  });
+  sendArrayToStorage(todoArray);
   $(this).closest('.todo-card').remove();
 };
 
 function upVote() {
-  var checkQualityStatus = $(this).closest('.card-quality-flex').find('.todo-quality').text();
-  if (checkQualityStatus === 'swill') {
-    $(this).closest('.card-quality-flex').find('.todo-quality').text('plausible');
-  } else {$(this).closest('.card-quality-flex').find('.todo-quality').text('genius');
-  }
+  var todoArray = getArrayFromStorage();
+  var id = parseInt($(this).closest('.todo-card').attr('id'));
+  var cardI = $(this).closest('.todo-card').find('.todo-importance');
+  todoArray.forEach(function(card, index) {
+    if (card.id === id ) {
+      if (card.status === 'none') {
+        cardI.text('low');
+        card.status = 'low';
+      } else if (card.status === 'low') {
+        cardI.text('normal');
+        card.status = 'normal';
+      }else if (card.status === 'normal') {
+        cardI.text('high');
+        card.status = 'high';
+      }else {
+        cardI.text('critical');
+        card.status = 'critical';
+    }
+    }
+  ;})
+sendArrayToStorage(todoArray);
 };
 
 function downVote() {
-  var checkQualityStatus = $(this).closest('.card-quality-flex').find('.todo-quality').text();
-  if (checkQualityStatus === 'genius') {
-    $(this).closest('.card-quality-flex').find('.todo-quality').text('plausible');
-  } else {$(this).closest('.card-quality-flex').find('.todo-quality').text('swill');
-  }
+  var todoArray = getArrayFromStorage();
+  var id = parseInt($(this).closest('.todo-card').attr('id'));
+  var cardI = $(this).closest('.todo-card').find('.todo-importance');
+  todoArray.forEach(function(card, index) {
+    if (card.id === id ) {
+      if (card.status === 'critical') {
+        cardI.text('high');
+        card.status = 'high';
+      } else if (card.status === 'high') {
+        cardI.text('normal');
+        card.status = 'normal';
+      }else if (card.status === 'normal') {
+        cardI.text('low');
+        card.status = 'low';
+      }else {
+        cardI.text('none');
+        card.status = 'none';
+    }
+    }
+  ;})
+sendArrayToStorage(todoArray);
 };
 
-function editTitle(event) {
+function editCard(event) {
   if (event.keyCode === 13) {
     event.preventDefault();
     this.blur();
   }
   var id = $(this).closest('.todo-card')[0].id;
-  var title = $(this).text();
+
   var todoArray = getArrayFromStorage();
-  todoArray.forEach(function(card) {
-    if (card.id == id) {
-      card.title = title;
+  todoArray.forEach(function(card, index) {
+    if (card.id === id) {
+      card.title = $('h2').text();
+      card.body = $('p').text();
     }
   });
   sendArrayToStorage(todoArray);
 };
 
-function editBody(event) {
-  if (event.keyCode === 13) {
-    event.preventDefault();
-    this.blur();
-  }
-  var id = $(this).closest('.todo-card')[0].id;
-  var body = $(this).text();
-  var todoArray = getArrayFromStorage();
-  todoArray.forEach(function(card) {
-    if (card.id == id) {
-      card.body = body;
-    }
-  });
-  sendArrayToStorage(todoArray);
-};
-
-//internal functions
-function FreshTodo(title, body, status) {
+function FreshTodo(title, body) {
   this.title = title;
   this.body = body;
-  this.status = "swill";
+  this.status = "normal";
   this.id = Date.now();
+  this.completed = false;
 }
 
 function getArrayFromStorage(){
-  var todoArray = JSON.parse(localStorage.getItem("todoArray"));
-  todoArray === null ? todoArray = [] : null;
-  return todoArray;
+  var todoArray = localStorage.getItem("todoArray");
+  if ((todoArray !== "undefined") && (todoArray !== null)) {
+    todoArray = JSON.parse(todoArray);
+    return todoArray;
+  } else {
+    todoArray = [];
+    return todoArray;
+  };
+}
+
+function updateHtml(event) {
+  event.preventDefault();
+  var todoArray = localStorage.getItem("todoArray");
+  if ((todoArray !== "undefined") && (todoArray !== null)) {
+    todoArray = JSON.parse(todoArray);
+    todoArray.forEach(function(card) {
+      prependCard(card);
+    });
+  } else {
+    todoArray = [];
+    return todoArray;
+  };
+}
+
+function showTen() {
+  var todoArray = localStorage.getItem("todoArray");
+  if ((todoArray !== "undefined") && (todoArray !== null)) {
+    todoArray = JSON.parse(todoArray);
+    todoArray.forEach(function(card, index) {
+      if (index <= 9){
+        prependCard(card);
+      }
+
+    });
+  } else {
+    todoArray = [];
+    return todoArray;
+  };
 }
 
 function addCard() {
   var todoTitle = $("#todo-title").val();
   var todoBody = $("#todo-body").val();
-  var todoStatus = "swill"
-  var newTodo = new FreshTodo(todoTitle, todoBody, todoStatus);
+  // var todoStatus = "swill"
+  var newTodo = new FreshTodo(todoTitle, todoBody);
   prependCard(newTodo);
   var todoArray = getArrayFromStorage();
   todoArray.push(newTodo);
@@ -117,15 +182,6 @@ function addCard() {
 
 function sendArrayToStorage(todoArray) {
   localStorage.setItem("todoArray", JSON.stringify(todoArray));
-}
-
-function getTodoFromStorage() {
-  if (localStorage.getItem('todoArray')) {
-    var todoArray = JSON.parse(localStorage.getItem("todoArray"));
-    todoArray.forEach(function(element) {
-      prependCard(element);
-    });
-  };
 }
 
 function prependCard(todo) {
@@ -139,7 +195,8 @@ function prependCard(todo) {
       <div class="card-quality-flex quality-spacing">
         <img src="icons/upvote.svg" class="card-buttons" id="upvote-button"/>
         <img src="icons/downvote.svg"  class="card-buttons" id="downvote-button" />
-        <h3>quality: <span class="todo-quality">${todo.status}</span></h3>
+        <h3>importance: <span class="todo-importance">${todo.status}</span></h3>
+        <button class="completed">completed</button>
       </div>
     </div>`
   );
@@ -162,6 +219,56 @@ function evalInputs() {
     resetInputs();
   }
 };
+
+function filterTodo() {
+  var todoArray = getArrayFromStorage();
+  var filterInput = $('#search-bar').val();
+  if (filterInput !== ""){
+    var filterCards = todoArray.filter(function(card) {
+      return (card.title.toLowerCase().includes(filterInput.toLowerCase()) ||
+      card.body.toLowerCase().includes(filterInput.toLowerCase()));
+    });
+    $('.todo-stream').empty();
+    filterCards.forEach(function(card) {
+      prependCard(card);
+    });
+  } else if (filterInput === "") {
+    $('.todo-stream').empty();
+    updateHtml();
+  }
+}
+
+// not working
+function todoComplete() {
+  console.log('in complete button');
+  var todoArray = getArrayFromStorage();
+  var id = parseInt($(this).closest('.todo-card').attr('id'));
+  var todoCard = $(this).closest('.todo-card');
+  console.log(todoCard);
+  todoArray.forEach(function(card, index) {
+    if (card.id === id ) {
+      // todoCard.classList.add("todo-completed");
+    // todoCard.className += " todo-completed";
+    $(todoCard).addClass('todo-completed');
+      card.completed = true;
+  }});
+  sendArrayToStorage(todoArray);
+}
+
+
+function filterCompleted(event) {
+  event.preventDefault();
+  var todoArray = getArrayFromStorage();
+  var filterComplete = todoArray.filter(function(card) {
+      return (card.completed === true)
+    });
+    $('.todo-stream').empty();
+    filterComplete.forEach(function(card) {
+      prependCard(card);
+    });
+
+}
+
 
 //hover state functions
 function deleteHover() {
