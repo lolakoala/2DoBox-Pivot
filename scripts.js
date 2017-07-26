@@ -4,8 +4,8 @@ $("#todo-body, #todo-title").on('keyup', enableSave);
 $("#save-button").on('click', saveFunc);
 
 $(".todo-stream").on('click', ".delete-button", removeCard);
-$(".todo-stream").on('click', "#upvote-button, #downvote-button", checkButton);
-$('.todo-stream').on('keyup', 'h2, p', editCard);
+$(".todo-stream").on('click', ".upvote-button, .downvote-button", checkButton);
+$('.todo-stream').on('keyup', '.card-title, p', editCard);
 $('.todo-stream').on('click', '.completed', todoComplete);
 
 $('#search-bar').on('keyup', filterTodo);
@@ -19,10 +19,10 @@ $('.todo-buttons').on('click', '.none', showNone);
 
 $(document).on('mouseenter', '.delete-button', deleteHover);
 $(document).on('mouseleave', '.delete-button', originalDelete);
-$(document).on('mouseenter', '#upvote-button', upvHover);
-$(document).on('mouseleave', '#upvote-button', originalUpv);
-$(document).on('mouseenter', '#downvote-button', downvHover);
-$(document).on('mouseleave', '#downvote-button', originalDownv);
+$(document).on('mouseenter', '.upvote-button', upvHover);
+$(document).on('mouseleave', '.upvote-button', originalUpv);
+$(document).on('mouseenter', '.downvote-button', downvHover);
+$(document).on('mouseleave', '.downvote-button', originalDownv);
 
 function showTen() {
   var todoArray = getArrayFromStorage();
@@ -37,15 +37,15 @@ function prependCard(todo) {
   $('.todo-stream').prepend(
     `<div class="todo-card ${todo.completed}" id="${todo.id}">
     <div class="card-title-flex">
-    <h2 contenteditable=true>${todo.title}</h2>
-    <img src="icons/delete.svg" class="card-buttons delete-button" />
+    <span class="card-title" contenteditable="true" role="textbox" tabindex="0">${todo.title}</span>
+    <img src="icons/delete.svg" class="card-buttons delete-button" alt="an orange x icon" tabindex="0" role="button" />
     </div>
-    <p contenteditable=true>${todo.body}</p>
+    <p contenteditable="true" role="textbox" tabindex="0">${todo.body}</p>
     <div class="card-quality-flex quality-spacing">
-    <img src="icons/upvote.svg" class="card-buttons" id="upvote-button"/>
-    <img src="icons/downvote.svg"  class="card-buttons" id="downvote-button" />
+    <img src="icons/upvote.svg" class="card-buttons upvote-button" alt="a green arrow pointing up" role="button" tabindex="0" />
+    <img src="icons/downvote.svg"  class="card-buttons downvote-button" alt="a red arrow pointing down" role="button" tabindex="0" />
     <h3>importance: <span class="todo-importance">${todo.status}</span></h3>
-    <button class="completed">completed</button>
+    <button class="completed" tabindex="0">completed</button>
     </div>
     </div>`
   );
@@ -177,7 +177,7 @@ function editArray(id, event) {
   var todoArray = getArrayFromStorage();
   todoArray.map(function(card, index) {
     if (card.id === id) {
-      card.title = $(event.target).closest('.todo-card').find('h2').text();
+      card.title = $(event.target).closest('.todo-card').find('.card-title').text();
       card.body = $(event.target).closest('.todo-card').find('p').text();
     };
   });
