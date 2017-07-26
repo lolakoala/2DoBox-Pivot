@@ -6,26 +6,17 @@
 body {
   font-family: "Open Sans", sans-serif;
   height: 100vh;
+  margin: auto;
   min-width: 350px;
   width: 100%;
-  margin: auto;
 }
 
-label {
-  display: none;
+button:hover {
+  cursor: pointer;
 }
 
-.container {
-  margin: auto;
-  max-width: 100%;
-}
-
-.blue-box {
-  background-color: #E5F3F2;
-  height: 255px;
-  position: sticky;
-  top: 0;
-  width: 100%;
+form {
+  height: 75px;
 }
 
 h1 {
@@ -36,27 +27,117 @@ h1 {
   text-align: center;
 }
 
-.todo-log {
-  margin: auto;
-  width: 50%;
+h3 {
+  color: #6D6E71;
+  font-family: "Roboto Slab";
+  margin-bottom: 0px;
+  margin-left: 15px;
 }
 
-.todo-stream {
-  position: absolute;
-  top: 500px;
-  left: 25%;
+p {
+  color: #939598;
+  margin-left: : 5px;
 }
 
-.todo-text {
-  color: #00A79D;
+.blue-box {
+  background-color: #E5F3F2;
+  height: 255px;
+  position: sticky;
+  top: 0;
+  width: 100%;
 }
 
 .box-text {
   color: #6D6E71;
 }
 
-form {
-  height: 75px;
+.button-holder {
+  display: flex;
+  justify-content: center;
+}
+
+.card-buttons {
+  height: 25px;
+  width: 25px;
+}
+
+.card-title {
+  color: #6D6E71;
+  font-family: "Roboto Slab";
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.card-title-flex,
+.card-quality-flex {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  margin: 10px 0;
+}
+
+.card-title-flex {
+  justify-content: space-between;
+  margin-top: 18px;
+
+}
+
+.card-quality-flex {
+  justify-content: flex-start;
+}
+
+.completed {
+  background-color: #00A79D;
+  border-radius: 20%;
+  border-style: none;
+  bottom: 5px;
+  color: #FFFFFF;
+  font-size: 12px;
+  height: 20px;
+  margin-bottom: 5px;
+  position: absolute;
+  right: 5px;
+  width: 80px;
+}
+
+.container {
+  margin: auto;
+  max-width: 100%;
+}
+
+.importance {
+  display: inline-block;
+  margin: auto;
+  width: 18%;
+}
+
+.quality-spacing {
+  margin: 20px 0;
+}
+
+.todo-card {
+  border-bottom: 1px #D1D3D4 solid;
+  position: relative;
+  width: 100%;
+}
+
+.todo-completed {
+  text-decoration: line-through;
+}
+
+.todo-log {
+  margin: auto;
+  width: 50%;
+}
+
+.todo-stream {
+  left: 25%;
+  position: absolute;
+  top: 500px;
+}
+
+.todo-text {
+  color: #00A79D;
 }
 
 .user-inputs {
@@ -78,13 +159,9 @@ form {
   font-weight: bold;
 }
 
-/*#todo-body {
-  margin-bottom:
-}*/
-
-#todo-title,
-#todo-body {
-  padding-left: 5px;
+.white-box {
+  margin: 0;
+  width: 100%;
 }
 
 #save-button {
@@ -95,80 +172,29 @@ form {
   margin-bottom: 5px;
 }
 
-#save-button:hover {
-  background-color: #045E55;
-}
-
 #save-button:disabled {
   background-color: #D1D3D4;
+}
+
+#save-button:hover {
+  background-color: #045E55;
 }
 
 #search-bar {
   margin: 25px 0;
 }
 
-.white-box {
-  margin: 0;
-  width: 100%;
+#show-completed-button,
+#show-all-button,
+.importance {
+  background-color: #00A79D;
+  border: none;
+  color: #FFFFFF;
 }
 
-.todo-card {
-  border-bottom: 1px #D1D3D4 solid;
-  width: 100%;
-  position: relative;
-}
-
-.todo-completed {
-  text-decoration: line-through;
-  /*background-color: #D1D3D4;*/
-}
-
-.card-title-flex,
-.card-quality-flex {
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  margin: 10px 0;
-}
-
-.card-title-flex {
-  justify-content: space-between;
-  margin-top: 18px;
-
-}
-
-.card-quality-flex {
-  justify-content: flex-start;
-}
-
-.quality-spacing {
-  margin: 20px 0;
-}
-
-h2,
-h3 {
-  color: #6D6E71;
-  font-family: "Roboto Slab";
-}
-
-h2 {
-  font-size: 22px;
-  font-weight: bold;
-}
-
-h3 {
-  margin-left: 5px;
-  margin-bottom: 20px;
-}
-
-p {
-  color: #939598;
-  margin-left: : 5px;
-}
-
-.card-buttons {
-  height: 25px;
-  width: 25px;
+#todo-title,
+#todo-body {
+  padding-left: 5px;
 }
 
 #upvote-button,
@@ -177,47 +203,13 @@ p {
   margin-right: 20px;
 }
 
-.completed {
-  background-color: #00A79D;
-  border-style: none;
-  color: #FFFFFF;
-  font-size: 12px;
-  margin-bottom: 5px;
-  /*float: right;*/
-  height: 20px;
-  width: 80px;
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  border-radius: 20%;
-}
-
-#show-completed-button,
-#show-all-button,
-.importance {
-  color: #FFFFFF;
-  border: none;
-  background-color: #00A79D;
-}
-
-.importance {
-  display: inline-block;
-  width: 18%;
-  margin: auto;
-}
-
-.button-holder {
-  display: flex;
-  justify-content: center;
-}
-
-button:hover {
-  cursor: pointer;
-}
-
 @media (max-width: 900px) {
   .todo-log {
     width: 80%;
+  }
+
+  .todo-stream {
+    left: 10%;
   }
 }
 
@@ -225,53 +217,22 @@ button:hover {
   .todo-log {
     width: 90%;
   }
+
+  .todo-stream {
+    left: 5%;
+  }
 }
 
 @media (max-width: 500px) {
-
-  .user-inputs {
-  color: #6D6E71;
-  font-size: 30px;
-  font-weight: bold;
-  }
-
-  ::-webkit-input-placeholder {
-   font-size: 30px;
-   padding-left: 5px;
+  p {
+    font-size: 25px;
   }
 
   .blue-box {
     height: 380px;
   }
 
-  #todo-title,
-  #search-bar {
-    height: 50px;
-  }
-
-  #todo-body {
-    height: 120px;
-    padding-bottom: 75px;
-  }
-
-  #save-button {
-    font-size: 30px;
-    height: 60px;
-  }
-
-  ::-webkit-#todo-body-placeholder {
-    padding-bottom: 75px;
-  }
-
-  .search-box {
-    margin-bottom: 40px;
-  }
-
-  #search-bar {
-    margin-bottom: 30px;
-  }
-
-  h2 {
+  .card-title {
     font-size: 35px;
   }
 
@@ -280,7 +241,52 @@ button:hover {
     width: 35px;
   }
 
-  p {
-    font-size: 25px;
+  .search-box {
+    margin-bottom: 40px;
+  }
+
+  .todo-stream {
+    top: 625px;
+  }
+
+  .user-inputs {
+  color: #6D6E71;
+  font-size: 30px;
+  font-weight: bold;
+  }
+
+  ::-webkit-input-placeholder {
+    font-size: 30px;
+    padding-left: 5px;
+  }
+
+  #save-button {
+    font-size: 30px;
+    height: 60px;
+  }
+
+  #search-bar {
+    margin-bottom: 30px;
+  }
+
+  #show-completed-button,
+  #show-all-button,
+  .importance {
+    color: #FFFFFF;
+    font-size: 16px;
+  }
+
+  #todo-body {
+    height: 120px;
+    padding-bottom: 75px;
+  }
+
+  #todo-title,
+  #search-bar {
+    height: 50px;
+  }
+
+  ::-webkit-#todo-body-placeholder {
+    padding-bottom: 75px;
   }
 }
