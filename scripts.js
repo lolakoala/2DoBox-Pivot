@@ -66,34 +66,38 @@ todoArray.forEach(function(card, index) {
   return todoArray;
 }
 
-function upVote() {
+function upVote(e) {
+  console.log(e.target);
   var todoArray = getArrayFromStorage();
   var id = parseInt($(this).closest('.todo-card').attr('id'));
   var cardI = $(this).closest('.todo-card').find('.todo-importance');
   todoArray.forEach(function(card, index) {
     if (card.id === id ) {
-      importanceUp(card, cardI);
+      importanceUp(card);
     }
   ;})
 sendArrayToStorage(todoArray);
 };
 
-function importanceUp(card, cardI) {
+// if you click up, go up; if you click down, go down
+function importanceUp(card, event) {
+// var importances = ['none', 'low', 'normal', 'high', 'critical'];
+// if (event.target === up arrow && current index < array.length) {
+//var puppies = current index of card.status
+// card.status = current index + 1 / puppies +=;
+// }
+  console.log(event.target);
   switch (card.status) {
     case 'none':
-      cardI.text('low');
       card.status = 'low';
       break;
     case 'low':
-      cardI.text('normal');
       card.status = 'normal';
       break;
     case 'normal':
-      cardI.text('high');
       card.status = 'high';
       break;
     case 'high':
-      cardI.text('critical');
       card.status = 'critical';
       break;
       default:
