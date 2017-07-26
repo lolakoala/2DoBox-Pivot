@@ -11,6 +11,10 @@ body {
   margin: auto;
 }
 
+label {
+  display: none;
+}
+
 .container {
   margin: auto;
   max-width: 100%;
@@ -97,10 +101,6 @@ form {
 
 #save-button:disabled {
   background-color: #D1D3D4;
-}
-
-.user-inputs:focus {
-  outline: none;
 }
 
 #search-bar {
@@ -190,10 +190,6 @@ p {
   bottom: 5px;
   right: 5px;
   border-radius: 20%;
-}
-
-.completed:focus {
-  outline: none;
 }
 
 #show-completed-button,
