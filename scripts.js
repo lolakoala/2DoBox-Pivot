@@ -26,11 +26,23 @@ $(document).on('mouseleave', '.downvote-button', originalDownv);
 
 function showTen() {
   var todoArray = getArrayFromStorage();
-  todoArray.forEach(function(card, index) {
-    if (index <= 9){
-      prependCard(card);
-    };
-  });
+  if (todoArray !== null) {
+    todoArray.reverse().forEach(function(card, index) {
+      if (index <= 9){
+        prependCard(card);
+      };
+    });
+  };
+};
+
+function getArrayFromStorage(){
+  var todoArray = localStorage.getItem("todoArray");
+  if ((todoArray !== "undefined") && (todoArray !== null)) {
+    todoArray = JSON.parse(todoArray);
+  } else {
+    todoArray = [];
+  };
+  return todoArray;
 };
 
 function prependCard(todo) {
@@ -42,8 +54,8 @@ function prependCard(todo) {
     </div>
     <p contenteditable="true" role="textbox" tabindex="0">${todo.body}</p>
     <div class="card-quality-flex quality-spacing">
-    <img src="icons/upvote.svg" class="card-buttons upvote-button" alt="a green arrow pointing up" role="button" tabindex="0" />
-    <img src="icons/downvote.svg"  class="card-buttons downvote-button" alt="a red arrow pointing down" role="button" tabindex="0" />
+    <img src="icons/upvote.svg" class="card-buttons upvote-button" data-button="upvote-button" alt="a green arrow pointing up" role="button" tabindex="0" />
+    <img src="icons/downvote.svg"  class="card-buttons downvote-button" data-button="downvote-button" alt="a red arrow pointing down" role="button" tabindex="0" />
     <h3>importance: <span class="todo-importance">${todo.status}</span></h3>
     <button class="completed" tabindex="0">completed</button>
     </div>
@@ -89,20 +101,6 @@ function FreshTodo(title, body) {
   this.completed = 'incomplete';
 };
 
-function getArrayFromStorage(){
-  var todoArray = localStorage.getItem("todoArray");
-  if ((todoArray !== "undefined") && (todoArray !== null)) {
-    todoArray = JSON.parse(todoArray);
-    return todoArray;
-  } else {
-    emptyArray(todoArray);
-  };
-};
-
-function emptyArray(todoArray) {
-  todoArray = [];
-  return todoArray;
-};
 
 function sendArrayToStorage(todoArray) {
   localStorage.setItem("todoArray", JSON.stringify(todoArray));
@@ -133,7 +131,7 @@ function spliceArray(id, todoArray) {
 function checkButton(e) {
   var todoArray = getArrayFromStorage();
   var id = parseInt($(this).closest('.todo-card').attr('id'));
-  var whichButton = e.target.id;
+  var whichButton = e.target.dataset.button;
   todoArray.forEach(function(card, index) {
     if (card.id === id ) {
       adjustImportance(card, whichButton);
@@ -222,9 +220,11 @@ function matchFilterInput(todoArray, filterInput) {
 
 function showConditional(array) {
   $('.todo-stream').empty();
-  array.forEach(function(card) {
+  if (array !== null) {
+    array.forEach(function(card) {
     prependCard(card);
-  });
+    });
+  };
 };
 
 function cardLowerCase(todoArray) {
