@@ -27,7 +27,7 @@ $(document).on('mouseleave', '.downvote-button', originalDownv);
 function showTen() {
   var todoArray = getArrayFromStorage();
   if (todoArray !== null) {
-    todoArray.reverse().forEach(function(card, index) {
+    todoArray.forEach(function(card, index) {
       if (index <= 9){
         prependCard(card);
       };
